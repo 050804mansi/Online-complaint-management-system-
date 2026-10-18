@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Rent Insights | Mansi Saxena</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='dashboard.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='visual.css') }}">
+  <script defer src="{{ url_for('static', filename='app.js') }}"></script>
+</head>
+<body>
+  <main class="shell">
+    <header class="topbar"><a class="brand" href="/">Rent<span>Insights</span></a><span class="top-note">A smarter starting point for renters</span></header>
+    <section class="intro hero-layout">
+      <div class="hero-copy">
+        <p class="eyebrow">RENTAL MARKET INTELLIGENCE</p>
+        <h1>Make your next move<br><span>with better context.</span></h1>
+        <p class="lede">Estimate monthly rent with a trained model, then compare it with listing patterns for the same city and bedroom count.</p>
+        <div class="hero-actions"><a class="hero-cta" href="#estimator">Start an estimate <span aria-hidden="true">&darr;</span></a><span class="hero-caption">Fast estimate &middot; Market context &middot; No sign-up</span></div>
+      </div>
+      <aside class="hero-panel">
+        <div class="hero-panel-top"><span class="pulse-dot"></span> DATA-DRIVEN ESTIMATE</div>
+        <div class="hero-panel-title">A clearer picture<br>before you decide.</div>
+        <div class="hero-panel-stat"><span>Rental listings</span><strong>{{ '{:,}'.format(dataset_count) }}</strong></div>
+        <div class="hero-panel-stat"><span>Cities represented</span><strong>{{ city_count }}</strong></div>
+        <div class="mini-bars" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+        <p>Model estimate paired with local market context</p>
+      </aside>
+    </section>
+    <section class="coverage-strip" aria-label="Dataset coverage">
+      <div><strong>{{ '{:,}'.format(dataset_count) }}</strong><span>listings analyzed</span></div>
+      <div><strong>{{ city_count }}</strong><span>cities covered</span></div>
+      <div><strong>{{ '{:,}'.format(locality_count) }}</strong><span>localities indexed</span></div>
+      <div class="coverage-note">Dataset snapshot<br><b>Not live market data</b></div>
+    </section>
+    <section class="form-card" id="estimator">
+      <div class="section-heading"><div><p class="eyebrow">01 &mdash; PROPERTY PROFILE</p><h2>Describe the home</h2></div><span class="step">ABOUT 30 SECONDS</span></div>
+      {% if error %}<div class="error" role="alert">{{ error }}</div>{% endif %}
+      <form action="{{ url_for('estimate') }}" method="post" class="property-form">
+        <label>City<select name="city" id="city" required><option value="">Choose a city</option>{% for city in cities %}<option value="{{ city }}">{{ city }}</option>{% endfor %}</select></label>
+        <label>Locality<select name="locality" id="locality" required disabled><option value="">Choose a city first</option></select></label>
+        <label>Area <small>square feet</small><input name="area" type="number" min="1" step="1" placeholder="e.g. 850" required></label>
+        <label>Bedrooms<select name="beds" required><option value="">Choose</option>{% for n in range(1, 8) %}<option value="{{ n }}">{{ n }} BHK</option>{% endfor %}</select></label>
+        <label>Bathrooms<select name="bathrooms" required><option value="">Choose</option>{% for n in range(1, 8) %}<option value="{{ n }}">{{ n }}</option>{% endfor %}</select></label>
+        <label>Balconies<select name="balconies" required><option value="">Choose</option>{% for n in range(0, 6) %}<option value="{{ n }}">{{ n }}</option>{% endfor %}</select></label>
+        <label class="wide">Furnishing<select name="furnishing" required><option value="">Choose furnishing</option>{% for item in furnishings %}<option value="{{ item }}">{{ item }}</option>{% endfor %}</select></label>
+        <button class="submit wide" type="submit">See rent estimate <span aria-hidden="true">&rarr;</span></button>
+      </form>
+      <p class="fine-print">Your estimate is a guide based on the supplied listing data. Rent can vary with building, amenities, and current demand.</p>
+    </section>
+    <section class="method-section">
+      <div class="section-heading"><div><p class="eyebrow">HOW TO READ THE RESULT</p><h2>More than one number</h2></div></div>
+      <div class="method-grid">
+        <article><span class="method-number">01</span><h3>Model estimate</h3><p>A Random Forest model weighs area, room count, furnishing, city, and locality.</p></article>
+        <article><span class="method-number">02</span><h3>Market comparison</h3><p>See the median and middle range for listings with the same city and BHK.</p></article>
+        <article><span class="method-number">03</span><h3>Local context</h3><p>Review the selected locality on a map and compare rent levels across BHK sizes.</p></article>
+      </div>
+    </section>
+    <footer class="site-footer">
+      <div class="socials">
+        <a href="https://www.linkedin.com/in/mansi-saxena-049102362" target="_blank" rel="noreferrer" aria-label="Mansi Saxena on LinkedIn"><img src="{{ url_for('static', filename='linkedin.svg') }}" alt=""></a>
+        <a href="https://github.com/050804mansi" target="_blank" rel="noreferrer" aria-label="Mansi Saxena on GitHub"><img src="{{ url_for('static', filename='github.svg') }}" alt=""></a>
+        <a href="mailto:mansi53245@gmail.com" aria-label="Email Mansi Saxena"><span class="mail-icon" aria-hidden="true">&#9993;</span></a>
+      </div>
+      <p>Built and customized by <strong>Mansi Saxena</strong></p>
+      <p class="sub-footer">&copy; 2026 Mansi Saxena &middot; All rights reserved &middot; Demo data is simulated</p>
+    </footer>
+  </main>
+</body>
+</html>

@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Your estimate | Rent Insights</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='dashboard.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='visual.css') }}">
+</head>
+<body>
+  <main class="shell result-shell">
+    <header class="topbar"><a class="brand" href="{{ url_for('home') }}">Rent<span>Insights</span></a><a class="back-link" href="{{ url_for('home') }}">&larr; Edit details</a></header>
+    <section class="result-intro">
+      <p class="eyebrow">YOUR RENT SNAPSHOT</p>
+      <h1>A clearer view<br><span>of this property.</span></h1>
+      <p class="lede">{{ values.beds }} BHK in {{ values.locality }}, {{ values.city }} &middot; {{ values.area|round|int }} sq ft &middot; {{ values.furnishing }}</p>
+    </section>
+    <section class="result-grid">
+      <article class="result-card estimate-card">
+        <div class="estimate-label">MODEL ESTIMATE / MONTH</div>
+        <div class="estimate">&#8377;{{ '{:,}'.format(estimate) }}<span>monthly</span></div>
+        <div class="verdict"><strong>{{ label }}</strong><span>{{ '+' if difference > 0 else '' }}{{ difference }}% vs city median for {{ values.beds }} BHK</span></div>
+        <div class="range-block"><div><span>Typical listing range</span><strong>&#8377;{{ '{:,}'.format(lower) }} - &#8377;{{ '{:,}'.format(upper) }}</strong></div><div class="range-track"><i></i></div><small>25th to 75th percentile of {{ sample_count }} city listings with the same bedroom count.</small></div>
+        <a class="map-link" href="{{ map_url }}" target="_blank" rel="noreferrer"><span class="map-pin">&#9679;</span> View {{ values.locality }} on map <b aria-hidden="true">&nearr;</b></a>
+      </article>
+      <article class="insight-card">
+        <div class="card-topline"><span class="eyebrow">MARKET CONTEXT</span><span class="context-tag">{{ values.city }}</span></div>
+        <h2>Similar listings</h2>
+        <p class="card-description">Same city and bedroom count</p>
+        <div class="market-stat"><span>Median monthly rent</span><strong>&#8377;{{ '{:,}'.format(median) }}</strong></div>
+        <div class="market-stat"><span>Median rent per sq ft</span><strong>&#8377;{{ rent_per_sqft }}</strong></div>
+        <div class="market-stat"><span>Listings in comparison</span><strong>{{ '{:,}'.format(sample_count) }}</strong></div>
+        <p class="data-note">Snapshot from the included listing dataset. It may not reflect today's live asking prices.</p>
+      </article>
+      <article class="chart-card wide-card">
+        <div class="card-topline"><span class="eyebrow">CITY RENT PATTERN</span><span class="context-tag">Monthly median</span></div>
+        <h2>How rent changes by bedroom count</h2>
+        <p class="card-description">Compare median rent for available listings in {{ values.city }}.</p>
+        {% if bhk_market %}<div class="bar-chart" role="img" aria-label="Median monthly rent by bedroom count in {{ values.city }}">
+          {% for item in bhk_market %}<div class="bar-row"><span class="bar-label">{{ item.beds }} BHK</span><div class="bar-track"><div class="bar-fill{% if item.selected %} selected{% endif %}" style="width: {{ item.width }}%"></div></div><strong>&#8377;{{ '{:,}'.format(item.median) }}</strong></div>{% endfor %}
+        </div>{% else %}<p class="data-note">Not enough city data to show this comparison.</p>{% endif %}
+      </article>
+      <article class="map-card wide-card">
+        <div class="card-topline"><span class="eyebrow">LOCATION EXPLORER</span><a class="map-open" href="{{ map_url }}" target="_blank" rel="noreferrer">Open full map &nearr;</a></div>
+        <h2>{{ values.locality }}, {{ values.city }}</h2>
+        <div class="map-frame"><iframe title="Map search for {{ values.locality }}, {{ values.city }}" src="{{ map_embed_url }}" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe></div>
+        <p class="data-note">Map search is based on the locality name. Check the result for the exact property address.</p>
+      </article>
+    </section>
+    <p class="model-note">This is a model-based estimate, not a guaranteed quote. Property condition, building amenities, and current demand can change actual rent.</p>
+    <a class="submit retry" href="{{ url_for('home') }}">Estimate another property <span aria-hidden="true">&rarr;</span></a>
+    <footer class="site-footer">
+      <div class="socials">
+        <a href="https://www.linkedin.com/in/mansi-saxena-049102362" target="_blank" rel="noreferrer" aria-label="Mansi Saxena on LinkedIn"><img src="{{ url_for('static', filename='linkedin.svg') }}" alt=""></a>
+        <a href="https://github.com/050804mansi" target="_blank" rel="noreferrer" aria-label="Mansi Saxena on GitHub"><img src="{{ url_for('static', filename='github.svg') }}" alt=""></a>
+        <a href="mailto:mansi53245@gmail.com" aria-label="Email Mansi Saxena"><span class="mail-icon" aria-hidden="true">&#9993;</span></a>
+      </div>
+      <p>Built and customized by <strong>Mansi Saxena</strong></p>
+      <p class="sub-footer">&copy; 2026 Mansi Saxena &middot; All rights reserved &middot; Demo data is simulated</p>
+    </footer>
+  </main>
+</body>
+</html>
